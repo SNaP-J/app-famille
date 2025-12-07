@@ -18,8 +18,8 @@
         
         <div class="demo-info">
           <strong>&#8505; Comptes de démo :</strong><br>
-          <small>parent@famille.fr / 123</small><br>
-          <small>enfant1@famille.fr / 123</small>
+          <small>Si la base est vide, utilisez :</small><br>
+          <small>parent@famille.fr / 123</small>
         </div>
       </div>
     </div>
@@ -52,6 +52,11 @@
     <div id="pending-requests"></div>
   </div>
 
+  <div id="stats-screen" class="screen-content" style="display:none;">
+    <div id="stats-container">
+      </div>
+  </div>
+
   <div id="profile-screen" class="screen-content" style="display:none;">
     <div class="profile-header-large">
         <img id="profile-avatar-large" src="" class="user-avatar-large">
@@ -67,6 +72,11 @@
       
       <label>URL de votre photo</label>
       <input type="text" id="profile-photo-url" placeholder="https://...">
+
+      <label>Ma couleur sur l'agenda</label>
+      <div id="color-picker" class="color-options-container">
+        </div>
+      <input type="hidden" id="profile-color">
       
       <button class="btn-save" onclick="saveProfile()">&#128190; Enregistrer les modifications</button>
       
@@ -87,6 +97,11 @@
       <span class="nav-label">Demandes</span>
       <span class="notification-badge" id="requests-badge" style="display: none;">0</span>
     </button>
+
+    <button class="nav-item" id="nav-stats" onclick="showScreen('stats')" data-target="stats" style="display: none;">
+      <span class="nav-icon">&#128202;</span>
+      <span class="nav-label">Stats</span>
+    </button>
     
     <button class="nav-item" onclick="showScreen('profile')" data-target="profile">
       <span class="nav-icon">&#128100;</span>
@@ -95,7 +110,21 @@
   </div>
 
   <div id="reservation-modal" class="modal">
-    <div class="modal-content"></div>
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 id="modal-title">Nouvelle réservation</h2>
+      
+      <input type="hidden" id="res-id"> <label>Date de début</label> 
+      <input type="date" id="res-start">
+      
+      <label>Date de fin</label> 
+      <input type="date" id="res-end">
+      
+      <div class="modal-buttons">
+        <button onclick="submitReservation()" class="btn-new-reservation" style="width:100%; margin-top:20px">Valider</button>
+        <button id="btn-delete-res" onclick="deleteReservation()" class="btn-delete" style="display:none;">&#128465; Supprimer</button>
+      </div>
+    </div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
