@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Appartement Strasbourg</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <div id="login-screen" class="screen active">
+    <div class="login-container">
+      <div class="login-box">
+        <h2>&#127968; Appartement Strasbourg</h2>
+        <input type="email" id="login-email" placeholder="Email" autocomplete="username">
+        <input type="password" id="login-password" placeholder="Mot de passe" autocomplete="current-password">
+        <button onclick="login()">Se connecter</button>
+        
+        <div class="demo-info">
+          <strong>&#8505; Comptes de démo :</strong><br>
+          <small>parent@famille.fr / 123</small><br>
+          <small>enfant1@famille.fr / 123</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="main-header" class="mobile-header" style="display:none;">
+    <h1 id="header-title">&#128197; Planning</h1>
+    <div class="header-right">
+      <img id="header-avatar" src="" class="user-avatar-mini" onclick="showScreen('profile')" alt="Profil">
+    </div>
+  </div>
+
+  <div id="calendar-screen" class="screen-content">
+    <div class="calendar-navigation">
+      <button onclick="changeMonth(-1)">&#9664;</button>
+      <h2 id="current-month">Chargement...</h2>
+      <button onclick="changeMonth(1)">&#9654;</button>
+    </div>
+
+    <div class="calendar-grid" id="calendar-grid"></div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="btn-new-reservation" onclick="openBookingModal()">
+        &#10133; Réserver une date
+      </button>
+    </div>
+  </div>
+
+  <div id="requests-screen" class="screen-content" style="display:none;">
+    <div id="pending-requests"></div>
+  </div>
+
+  <div id="profile-screen" class="screen-content" style="display:none;">
+    <div class="profile-header-large">
+        <img id="profile-avatar-large" src="" class="user-avatar-large">
+        <button class="btn-edit-avatar" onclick="document.getElementById('profile-photo-url').focus()">&#9999;&#65039;</button>
+    </div>
+
+    <div class="profile-form">
+      <label>Nom</label>
+      <input type="text" id="profile-name">
+      
+      <label>Email</label>
+      <input type="email" id="profile-email">
+      
+      <label>URL de votre photo</label>
+      <input type="text" id="profile-photo-url" placeholder="https://...">
+      
+      <button class="btn-save" onclick="saveProfile()">&#128190; Enregistrer les modifications</button>
+      
+      <button class="btn-logout" onclick="logout()">
+        <span>&#128682;</span> Se déconnecter
+      </button>
+    </div>
+  </div>
+
+  <div id="main-nav" class="bottom-nav" style="display:none;">
+    <button class="nav-item active" onclick="showScreen('calendar')" data-target="calendar">
+      <span class="nav-icon">&#128197;</span>
+      <span class="nav-label">Agenda</span>
+    </button>
+    
+    <button class="nav-item" id="nav-requests" onclick="showScreen('requests')" data-target="requests" style="display: none;">
+      <span class="nav-icon">&#128232;</span>
+      <span class="nav-label">Demandes</span>
+      <span class="notification-badge" id="requests-badge" style="display: none;">0</span>
+    </button>
+    
+    <button class="nav-item" onclick="showScreen('profile')" data-target="profile">
+      <span class="nav-icon">&#128100;</span>
+      <span class="nav-label">Profil</span>
+    </button>
+  </div>
+
+  <div id="reservation-modal" class="modal">
+    <div class="modal-content"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <script src="script.js"></script>
+</body>
+</html>
