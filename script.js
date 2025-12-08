@@ -2,12 +2,12 @@
 // ⚠️ COLLEZ VOTRE CONFIGURATION FIREBASE ICI (celle commençant par const firebaseConfig = ...)
 // Si vous ne l'avez plus, allez dans la Console Firebase > Paramètres (roue dentée) > Général
 const firebaseConfig = {
-	apiKey: "AIzaSyCYBoumkb22YWN3TmRwpmX04N_9RXAL6KM",
+	apiKey: "",
 	authDomain: "appartement-strasbourg.firebaseapp.com",
 	projectId: "appartement-strasbourg",
 	storageBucket: "appartement-strasbourg.firebasestorage.app",
-	messagingSenderId: "682575059640",
-	appId: "1:682575059640:web:563db103234e538654724d"
+	messagingSenderId: "",
+	appId: ""
 };
 
 /* --- 2. INITIALISATION --- */
@@ -542,4 +542,5 @@ function formatDate(s) {
   if(!s) return ''; 
   var d = s.split('-'); 
   return d[2] + '/' + d[1]; 
+
 }
