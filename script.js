@@ -58,7 +58,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   if (!db) return;
-
+db.collection("infos").doc("general").onSnapshot(function(doc) {
+    if (doc.exists) {
+        var text = doc.data().content;
+        var textarea = document.getElementById('house-memo');
+        if(textarea) textarea.value = text;
+    }
+});
   // Écoute Réservations
   db.collection("reservations").onSnapshot(function(snapshot) {
     let list = [];
@@ -201,6 +207,12 @@ function updateUI() {
     if (badge) {
       badge.textContent = pending;
       badge.style.display = pending > 0 ? 'block' : 'none';
+		var isParent = (state.currentUser.role === 'parent');
+var btnMemo = document.getElementById('btn-edit-memo');
+if(btnMemo) {
+    // Seul le parent voit le bouton modifier
+    btnMemo.style.display = isParent ? 'inline-block' : 'none';
+}
     }
   }
 }
@@ -508,5 +520,38 @@ function formatDate(s) {
   if(!s) return ''; 
   const d = s.split('-'); 
   return d[2] + '/' + d[1]; 
+}
+function toggleEditMemo() {
+    var area = document.getElementById('house-memo');
+    var btnEdit = document.getElementById('btn-edit-memo');
+    var btnSave = document.getElementById('btn-save-memo');
+    
+    // On passe en mode édition
+    area.readOnly = false;
+    area.style.background = "#fff";
+    area.style.border = "1px solid #ccc";
+    area.focus();
+    
+    btnEdit.style.display = 'none';
+    btnSave.style.display = 'inline-block';
+}
+
+function saveMemo() {
+    var text = document.getElementById('house-memo').value;
+    
+    // On sauvegarde dans une collection spéciale "infos"
+    db.collection("infos").doc("general").set({ content: text })
+      .then(function() {
+          alert("Infos mises à jour !");
+          // On remet en mode lecture seule
+          var area = document.getElementById('house-memo');
+          area.readOnly = true;
+          area.style.background = "#f9f9f9";
+          area.style.border = "none";
+          
+          document.getElementById('btn-edit-memo').style.display = 'inline-block';
+          document.getElementById('btn-save-memo').style.display = 'none';
+      })
+      .catch(function(e) { alert("Erreur : " + e); });
 }
 
