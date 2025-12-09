@@ -1,7 +1,6 @@
 /* --- 1. CONFIGURATION FIREBASE --- */
-// ⚠️ COLLEZ VOTRE CONFIGURATION FIREBASE ICI (celle commençant par const firebaseConfig = ...)
-// Si vous ne l'avez plus, allez dans la Console Firebase > Paramètres (roue dentée) > Général
 const firebaseConfig = {
+  const firebaseConfig = {
 	apiKey: "AIzaSyCYBoumkb22YWN3TmRwpmX04N_9RXAL6KM",
 	authDomain: "appartement-strasbourg.firebaseapp.com",
 	projectId: "appartement-strasbourg",
@@ -11,9 +10,9 @@ const firebaseConfig = {
 };
 
 /* --- 2. INITIALISATION --- */
-var db = null;
+let db = null;
 
-// Palette de couleurs pastels pour les enfants
+// Palette de couleurs pastels
 const colorPalette = [
   '#FFCDD2', '#F8BBD0', '#E1BEE7', '#D1C4E9', '#C5CAE9', 
   '#BBDEFB', '#B3E5FC', '#B2DFDB', '#C8E6C9', '#DCEDC8', 
@@ -33,24 +32,23 @@ try {
   alert("Erreur de connexion BDD.");
 }
 
-// Données par défaut (avec couleurs par défaut)
-var defaultUsers = [
-  { id: 1, name: "Marie Partouche", email: "parent@famille.fr", password: "123", role: "parent", photo: "", color: "#E1BEE7" },
-  { id: 2, name: "Sophie Partouche", email: "enfant1@famille.fr", password: "123", role: "enfant", photo: "", color: "#BBDEFB" }
+// Données par défaut
+const defaultUsers = [
+  { id: 1, name: "Eric Partouche", email: "parent@famille.fr", password: "123", role: "parent", photo: "", color: "#E1BEE7" },
 ];
 
-var state = {
+let state = {
   users: defaultUsers,
   reservations: [],
   currentUser: JSON.parse(localStorage.getItem('app_current_user')) || null
 };
 
-var currentMonth = new Date();
+let currentMonth = new Date();
 
 /* --- 3. CHARGEMENT & ÉCOUTEURS --- */
 document.addEventListener('DOMContentLoaded', function() {
   
-  var passInput = document.getElementById("login-password");
+  const passInput = document.getElementById("login-password");
   if(passInput) {
     passInput.addEventListener("keypress", function(event) {
       if (event.key === "Enter") {
@@ -64,9 +62,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Écoute Réservations
   db.collection("reservations").onSnapshot(function(snapshot) {
-    var list = [];
+    let list = [];
     snapshot.forEach(function(doc) {
-      var data = doc.data();
+      let data = doc.data();
       data.id = doc.id;
       list.push(data);
     });
@@ -81,9 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Écoute Utilisateurs
   db.collection("users").onSnapshot(function(snapshot) {
-    var cloudUsers = [];
+    let cloudUsers = [];
     snapshot.forEach(function(doc) {
-      var data = doc.data();
+      let data = doc.data();
       data.id = doc.id;
       cloudUsers.push(data);
     });
@@ -93,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       initDefaultUsers();
     }
-    // Si les utilisateurs changent (ex: changement de couleur), on rafraichit
     if(state.currentUser) refreshCurrentScreen();
   });
 
@@ -110,7 +107,7 @@ function initDefaultUsers() {
 }
 
 function refreshCurrentScreen() {
-    var screens = document.querySelectorAll('.screen-content');
+    const screens = document.querySelectorAll('.screen-content');
     screens.forEach(function(s) {
         if(s.style.display === 'block') {
             if(s.id === 'requests-screen') loadPendingRequests();
@@ -122,14 +119,14 @@ function refreshCurrentScreen() {
 
 /* --- 4. AUTHENTIFICATION --- */
 function login() {
-  var emailEl = document.getElementById('login-email');
-  var passEl = document.getElementById('login-password');
+  const emailEl = document.getElementById('login-email');
+  const passEl = document.getElementById('login-password');
   if (!emailEl || !passEl) return;
 
-  var email = emailEl.value.trim();
-  var pass = passEl.value.trim();
+  const email = emailEl.value.trim();
+  const pass = passEl.value.trim();
   
-  var user = state.users.find(function(u) { 
+  const user = state.users.find(function(u) { 
     return u.email === email && String(u.password) === pass; 
   });
   
@@ -143,11 +140,9 @@ function login() {
 }
 
 function logout() {
-  if(confirm("Se déconnecter ?")) {
-    state.currentUser = null;
-    localStorage.removeItem('app_current_user');
-    window.location.reload();
-  }
+  state.currentUser = null;
+  localStorage.removeItem('app_current_user');
+  window.location.reload();
 }
 
 function initAppSession() {
@@ -160,23 +155,23 @@ function initAppSession() {
 
 /* --- 5. NAVIGATION --- */
 function showScreen(screenId) {
-  var screens = document.querySelectorAll('.screen-content');
-  for(var i=0; i<screens.length; i++) { screens[i].style.display = 'none'; }
+  const screens = document.querySelectorAll('.screen-content');
+  screens.forEach(s => s.style.display = 'none');
   
-  var target = document.getElementById(screenId + '-screen');
+  const target = document.getElementById(screenId + '-screen');
   if (target) {
     target.style.display = 'block';
     target.scrollTop = 0;
   }
 
-  var btns = document.querySelectorAll('.nav-item');
-  for(var j=0; j<btns.length; j++) { btns[j].classList.remove('active'); }
+  const btns = document.querySelectorAll('.nav-item');
+  btns.forEach(b => b.classList.remove('active'));
   
-  var activeBtn = document.querySelector('.nav-item[data-target="' + screenId + '"]');
+  const activeBtn = document.querySelector('.nav-item[data-target="' + screenId + '"]');
   if (activeBtn) activeBtn.classList.add('active');
 
-  var titles = { 'calendar': 'Agenda', 'requests': 'Demandes', 'profile': 'Mon Profil', 'stats': 'Statistiques' };
-  var titleEl = document.getElementById('header-title');
+  const titles = { 'calendar': 'Agenda', 'requests': 'Demandes', 'profile': 'Mon Profil', 'stats': 'Statistiques' };
+  const titleEl = document.getElementById('header-title');
   if(titleEl) titleEl.textContent = titles[screenId] || 'App';
 
   if (screenId === 'calendar') renderCalendar();
@@ -188,23 +183,22 @@ function showScreen(screenId) {
 function updateUI() {
   if (!state.currentUser) return;
 
-  var user = state.users.find(function(u){ return String(u.id) === String(state.currentUser.id); }) || state.currentUser;
-  var avatarUrl = user.photo || ('https://ui-avatars.com/api/?name=' + user.name);
-  var headerImg = document.getElementById('header-avatar');
+  const user = state.users.find(function(u){ return String(u.id) === String(state.currentUser.id); }) || state.currentUser;
+  const avatarUrl = user.photo || ('https://ui-avatars.com/api/?name=' + user.name);
+  const headerImg = document.getElementById('header-avatar');
   if(headerImg) headerImg.src = avatarUrl;
 
-  var isParent = (state.currentUser.role === 'parent');
+  const isParent = (state.currentUser.role === 'parent');
   
-  // Afficher/Masquer onglets Parents
-  var navReq = document.getElementById('nav-requests');
+  const navReq = document.getElementById('nav-requests');
   if (navReq) navReq.style.display = isParent ? 'flex' : 'none';
   
-  var navStats = document.getElementById('nav-stats');
+  const navStats = document.getElementById('nav-stats');
   if (navStats) navStats.style.display = isParent ? 'flex' : 'none';
 
   if (isParent) {
-    var pending = state.reservations.filter(function(r){ return r.status === 'pending'; }).length;
-    var badge = document.getElementById('requests-badge');
+    const pending = state.reservations.filter(function(r){ return r.status === 'pending'; }).length;
+    const badge = document.getElementById('requests-badge');
     if (badge) {
       badge.textContent = pending;
       badge.style.display = pending > 0 ? 'block' : 'none';
@@ -219,61 +213,55 @@ function changeMonth(delta) {
 }
 
 function renderCalendar() {
-  var grid = document.getElementById('calendar-grid');
+  const grid = document.getElementById('calendar-grid');
   if (!grid) return;
   grid.innerHTML = '';
 
-  var monthTitle = document.getElementById('current-month');
+  const monthTitle = document.getElementById('current-month');
   if(monthTitle) monthTitle.textContent = currentMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
 
-  var days = ['L','M','M','J','V','S','D'];
-  for(var k=0; k<days.length; k++) grid.innerHTML += '<div class="calendar-day header">' + days[k] + '</div>';
+  const days = ['L','M','M','J','V','S','D'];
+  days.forEach(d => grid.innerHTML += '<div class="calendar-day header">' + d + '</div>');
 
-  var year = currentMonth.getFullYear();
-  var month = currentMonth.getMonth();
-  var firstDayObj = new Date(year, month, 1);
-  var lastDayObj = new Date(year, month + 1, 0);
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const firstDayObj = new Date(year, month, 1);
+  const lastDayObj = new Date(year, month + 1, 0);
   
-  var startDay = firstDayObj.getDay() - 1;
+  let startDay = firstDayObj.getDay() - 1;
   if (startDay === -1) startDay = 6;
 
-  for (var i = 0; i < startDay; i++) grid.innerHTML += '<div class="calendar-day other-month"></div>';
+  for (let i = 0; i < startDay; i++) grid.innerHTML += '<div class="calendar-day other-month"></div>';
 
-  for (var d = 1; d <= lastDayObj.getDate(); d++) {
-    var dateStr = year + '-' + String(month + 1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+  for (let d = 1; d <= lastDayObj.getDate(); d++) {
+    const dateStr = year + '-' + String(month + 1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
     
-    var dayRes = [];
-    for(var r=0; r<state.reservations.length; r++) {
-        var item = state.reservations[r];
+    let dayRes = [];
+    for(let r=0; r<state.reservations.length; r++) {
+        let item = state.reservations[r];
         if (dateStr >= item.startDate && dateStr <= item.endDate) {
             dayRes.push(item);
         }
     }
     
-    var cell = document.createElement('div');
+    const cell = document.createElement('div');
     cell.className = 'calendar-day';
     
     if (dayRes.length > 0) {
-      var approved = dayRes.find(function(r){ return r.status === 'approved'; });
-      var pending = dayRes.find(function(r){ return r.status === 'pending'; });
+      const approved = dayRes.find(function(r){ return r.status === 'approved'; });
+      const pending = dayRes.find(function(r){ return r.status === 'pending'; });
       
       if (approved) {
         cell.className += ' reserved';
-        
-        // --- COULEUR DE L'ENFANT ---
-        // On cherche l'utilisateur qui a réservé pour avoir sa couleur
-        var resUser = state.users.find(function(u) { return String(u.id) === String(approved.userId); });
+        const resUser = state.users.find(function(u) { return String(u.id) === String(approved.userId); });
         if(resUser && resUser.color) {
             cell.style.backgroundColor = resUser.color;
         }
-
         cell.innerHTML = '<div class="day-number">' + d + '</div>';
         
-        // Gestion du clic sur une réservation existante
         (function(resItem) { 
             cell.onclick = function() { 
                 if(state.currentUser.role === 'parent') {
-                    // Si parent : Modifier/Supprimer
                     openBookingModal(null, resItem);
                 } else {
                     alert("Réservé par : " + resItem.userName); 
@@ -295,74 +283,65 @@ function renderCalendar() {
 }
 
 /* --- 7. ACTIONS (CRUD) --- */
-
-// MODIFIÉ : Accepte maintenant un objet réservation existant pour modification
 function openBookingModal(dateVal, existingRes) {
   if(!state.currentUser) return;
-  var modal = document.getElementById('reservation-modal');
-  var title = document.getElementById('modal-title');
-  var idInput = document.getElementById('res-id');
-  var startInput = document.getElementById('res-start');
-  var endInput = document.getElementById('res-end');
-  var delBtn = document.getElementById('btn-delete-res');
+  const modal = document.getElementById('reservation-modal');
+  const title = document.getElementById('modal-title');
+  const idInput = document.getElementById('res-id');
+  const startInput = document.getElementById('res-start');
+  const endInput = document.getElementById('res-end');
+  const delBtn = document.getElementById('btn-delete-res');
   
   if (existingRes) {
-      // Mode MODIFICATION
       title.textContent = "Modifier la réservation de " + existingRes.userName;
       idInput.value = existingRes.id;
       startInput.value = existingRes.startDate;
       endInput.value = existingRes.endDate;
-      delBtn.style.display = 'block'; // Afficher bouton supprimer
+      delBtn.style.display = 'block';
   } else {
-      // Mode CRÉATION
       if(!dateVal) dateVal = new Date().toISOString().split('T')[0];
       title.textContent = (state.currentUser.role === 'parent') ? 'Bloquer une date' : 'Faire une demande';
-      idInput.value = ""; // Pas d'ID
+      idInput.value = "";
       startInput.value = dateVal;
       endInput.value = dateVal;
-      delBtn.style.display = 'none'; // Cacher bouton supprimer
+      delBtn.style.display = 'none';
   }
   
   modal.classList.add('active');
 }
 
 function closeModal() { 
-  var m = document.getElementById('reservation-modal');
+  const m = document.getElementById('reservation-modal');
   if(m) m.classList.remove('active'); 
 }
 
 function submitReservation() {
   if (!db) return alert("Pas de connexion base de données");
-  var resId = document.getElementById('res-id').value;
-  var start = document.getElementById('res-start').value;
-  var end = document.getElementById('res-end').value;
+  const resId = document.getElementById('res-id').value;
+  const start = document.getElementById('res-start').value;
+  const end = document.getElementById('res-end').value;
 
   if (!start || !end || start > end) return alert("Dates invalides");
 
-  // Vérif conflit (en excluant la réservation actuelle si on modifie)
-  var conflict = state.reservations.find(function(r) {
-      // Si c'est moi (modifiction), j'ignore mon propre créneau
+  const conflict = state.reservations.find(function(r) {
       if(resId && r.id === resId) return false;
       return r.status === 'approved' && ((start <= r.endDate) && (end >= r.startDate));
   });
   if (conflict) return alert("Conflit avec " + conflict.userName);
 
-  var data = {
+  const data = {
     startDate: start,
     endDate: end,
-    // Si modification, on garde le user original, sinon c'est moi
     userId: resId ? getResById(resId).userId : state.currentUser.id,
     userName: resId ? getResById(resId).userName : state.currentUser.name,
     status: (state.currentUser.role === 'parent') ? 'approved' : 'pending'
   };
 
   if (resId) {
-      // MISE À JOUR
       db.collection("reservations").doc(resId).update(data)
         .then(function() { closeModal(); alert("Modifié !"); })
         .catch(function(e) { alert("Erreur : " + e); });
   } else {
-      // CRÉATION
       data.createdAt = new Date().toISOString();
       db.collection("reservations").add(data)
         .then(function() { closeModal(); alert("Enregistré !"); })
@@ -371,7 +350,7 @@ function submitReservation() {
 }
 
 function deleteReservation() {
-    var resId = document.getElementById('res-id').value;
+    const resId = document.getElementById('res-id').value;
     if(!resId) return;
 
     if(confirm("Êtes-vous sûr de vouloir SUPPRIMER cette réservation ?")) {
@@ -398,50 +377,39 @@ function processRequest(id, newStatus) {
 
 /* --- 8. STATISTIQUES --- */
 function calculateAndRenderStats() {
-    var container = document.getElementById('stats-container');
+    const container = document.getElementById('stats-container');
     if(!container) return;
     
-    // 1. Calculer les jours par utilisateur
-    var stats = {};
+    let stats = {};
     
     state.reservations.forEach(function(r) {
         if(r.status !== 'approved') return;
-        
-        var start = new Date(r.startDate);
-        var end = new Date(r.endDate);
-        // Calcul différence en jours (inclusif)
-        var diffTime = Math.abs(end - start);
-        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
+        const start = new Date(r.startDate);
+        const end = new Date(r.endDate);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
         
         if(!stats[r.userId]) stats[r.userId] = 0;
         stats[r.userId] += diffDays;
     });
 
-    // 2. Trier pour le classement
-    // On convertit l'objet stats en tableau pour trier
-    var sortedStats = [];
+    let sortedStats = [];
     state.users.forEach(function(u) {
-        if(u.role === 'enfant') { // On ne compte que les enfants ? ou tout le monde ? Disons tout le monde.
-             sortedStats.push({
-                 user: u,
-                 days: stats[u.id] || 0
-             });
-        }
+         sortedStats.push({
+             user: u,
+             days: stats[u.id] || 0
+         });
     });
     
-    // Tri décroissant
     sortedStats.sort(function(a, b) { return b.days - a.days; });
     
-    // Trouver le max pour la barre de progression (pour que la plus grande fasse 100%)
-    var maxDays = sortedStats.length > 0 ? sortedStats[0].days : 1;
+    let maxDays = sortedStats.length > 0 ? sortedStats[0].days : 1;
     if(maxDays === 0) maxDays = 1;
 
-    // 3. Affichage HTML
-    var html = '<h2>Classement des réservations</h2><br>';
-    
+    let html = '<h2>Classement des réservations</h2><br>';
     sortedStats.forEach(function(item) {
-        var percentage = (item.days / maxDays) * 100;
-        var avatar = item.user.photo || ('https://ui-avatars.com/api/?name=' + item.user.name);
+        const percentage = (item.days / maxDays) * 100;
+        const avatar = item.user.photo || ('https://ui-avatars.com/api/?name=' + item.user.name);
         
         html += 
         '<div class="stat-card">' +
@@ -461,19 +429,18 @@ function calculateAndRenderStats() {
 
 /* --- 9. PROFILS --- */
 function loadPendingRequests() {
-  var container = document.getElementById('pending-requests');
+  const container = document.getElementById('pending-requests');
   if(!container) return;
   
-  var pending = state.reservations.filter(function(r) { return r.status === 'pending'; });
+  const pending = state.reservations.filter(function(r) { return r.status === 'pending'; });
   
   if (pending.length === 0) {
       container.innerHTML = '<div style="text-align:center; padding:20px; color:#999">Aucune demande</div>';
       return;
   }
 
-  var html = '';
-  for(var i=0; i<pending.length; i++) {
-      var r = pending[i];
+  let html = '';
+  pending.forEach(function(r) {
       html += '<div class="request-card">' +
       '<h3>👤 ' + r.userName + '</h3>' +
       '<p>📅 Du ' + formatDate(r.startDate) + ' au ' + formatDate(r.endDate) + '</p>' +
@@ -481,12 +448,12 @@ function loadPendingRequests() {
         '<button class="btn-approve" onclick="processRequest(\'' + r.id + '\', \'approved\')">Accepter</button>' +
         '<button class="btn-reject" onclick="processRequest(\'' + r.id + '\', \'rejected\')">Refuser</button>' +
       '</div></div>';
-  }
+  });
   container.innerHTML = html;
 }
 
 function loadProfileForm() {
-  var user = state.users.find(function(u) { return String(u.id) === String(state.currentUser.id); }) || state.currentUser;
+  const user = state.users.find(function(u) { return String(u.id) === String(state.currentUser.id); }) || state.currentUser;
   
   if(document.getElementById('profile-name')) {
       document.getElementById('profile-name').value = user.name || '';
@@ -499,16 +466,16 @@ function loadProfileForm() {
 }
 
 function renderColorPicker(selectedColor) {
-    var container = document.getElementById('color-picker');
+    const container = document.getElementById('color-picker');
     container.innerHTML = '';
     
     colorPalette.forEach(function(col) {
-        var div = document.createElement('div');
+        const div = document.createElement('div');
         div.className = 'color-option ' + (selectedColor === col ? 'selected' : '');
         div.style.backgroundColor = col;
         div.onclick = function() {
             document.getElementById('profile-color').value = col;
-            renderColorPicker(col); // Re-render pour la sélection visuelle
+            renderColorPicker(col); 
         };
         container.appendChild(div);
     });
@@ -516,12 +483,12 @@ function renderColorPicker(selectedColor) {
 
 function saveProfile() {
   if (!db) return alert("Hors ligne.");
-  var nameVal = document.getElementById('profile-name').value;
-  var emailVal = document.getElementById('profile-email').value;
-  var photoVal = document.getElementById('profile-photo-url').value;
-  var colorVal = document.getElementById('profile-color').value;
+  const nameVal = document.getElementById('profile-name').value;
+  const emailVal = document.getElementById('profile-email').value;
+  const photoVal = document.getElementById('profile-photo-url').value;
+  const colorVal = document.getElementById('profile-color').value;
 
-  var updatedData = { name: nameVal, email: emailVal, photo: photoVal, color: colorVal };
+  const updatedData = { name: nameVal, email: emailVal, photo: photoVal, color: colorVal };
 
   state.currentUser.name = nameVal;
   state.currentUser.email = emailVal;
@@ -540,8 +507,6 @@ function saveProfile() {
 
 function formatDate(s) { 
   if(!s) return ''; 
-  var d = s.split('-'); 
+  const d = s.split('-'); 
   return d[2] + '/' + d[1]; 
-
 }
-
