@@ -1,6 +1,5 @@
 /* --- 1. CONFIGURATION FIREBASE --- */
 const firebaseConfig = {
-  const firebaseConfig = {
 	apiKey: "AIzaSyCYBoumkb22YWN3TmRwpmX04N_9RXAL6KM",
 	authDomain: "appartement-strasbourg.firebaseapp.com",
 	projectId: "appartement-strasbourg",
@@ -510,3 +509,4 @@ function formatDate(s) {
   const d = s.split('-'); 
   return d[2] + '/' + d[1]; 
 }
+
