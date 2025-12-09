@@ -33,7 +33,8 @@ try {
 
 // Données par défaut
 const defaultUsers = [
-  { id: 1, name: "Eric Partouche", email: "parent@famille.fr", password: "123", role: "parent", photo: "", color: "#E1BEE7" },
+  { id: 1, name: "Marie Partouche", email: "parent@famille.fr", password: "123", role: "parent", photo: "", color: "#E1BEE7" },
+  { id: 2, name: "Sophie Partouche", email: "enfant1@famille.fr", password: "123", role: "enfant", photo: "", color: "#BBDEFB" }
 ];
 
 let state = {
@@ -58,13 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   if (!db) return;
-db.collection("infos").doc("general").onSnapshot(function(doc) {
-    if (doc.exists) {
-        var text = doc.data().content;
-        var textarea = document.getElementById('house-memo');
-        if(textarea) textarea.value = text;
-    }
-});
+
   // Écoute Réservations
   db.collection("reservations").onSnapshot(function(snapshot) {
     let list = [];
@@ -118,6 +113,7 @@ function refreshCurrentScreen() {
             if(s.id === 'requests-screen') loadPendingRequests();
             if(s.id === 'calendar-screen') renderCalendar();
             if(s.id === 'stats-screen') calculateAndRenderStats();
+            if(s.id === 'infos-screen') loadInfos();
         }
     });
 }
@@ -175,7 +171,7 @@ function showScreen(screenId) {
   const activeBtn = document.querySelector('.nav-item[data-target="' + screenId + '"]');
   if (activeBtn) activeBtn.classList.add('active');
 
-  const titles = { 'calendar': 'Agenda', 'requests': 'Demandes', 'profile': 'Mon Profil', 'stats': 'Statistiques' };
+  const titles = { 'calendar': 'Agenda', 'requests': 'Demandes', 'profile': 'Mon Profil', 'stats': 'Statistiques', 'infos': 'Infos Pratiques' };
   const titleEl = document.getElementById('header-title');
   if(titleEl) titleEl.textContent = titles[screenId] || 'App';
 
@@ -183,6 +179,7 @@ function showScreen(screenId) {
   if (screenId === 'requests') loadPendingRequests();
   if (screenId === 'profile') loadProfileForm();
   if (screenId === 'stats') calculateAndRenderStats();
+  if (screenId === 'infos') loadInfos();
 }
 
 function updateUI() {
@@ -201,18 +198,18 @@ function updateUI() {
   const navStats = document.getElementById('nav-stats');
   if (navStats) navStats.style.display = isParent ? 'flex' : 'none';
 
+  // Gestion bouton modifier infos
+  const infosBtns = document.getElementById('infos-buttons');
+  if (infosBtns) {
+      infosBtns.style.display = isParent ? 'block' : 'none';
+  }
+
   if (isParent) {
     const pending = state.reservations.filter(function(r){ return r.status === 'pending'; }).length;
     const badge = document.getElementById('requests-badge');
     if (badge) {
       badge.textContent = pending;
       badge.style.display = pending > 0 ? 'block' : 'none';
-		var isParent = (state.currentUser.role === 'parent');
-var btnMemo = document.getElementById('btn-edit-memo');
-if(btnMemo) {
-    // Seul le parent voit le bouton modifier
-    btnMemo.style.display = isParent ? 'inline-block' : 'none';
-}
     }
   }
 }
@@ -438,7 +435,45 @@ function calculateAndRenderStats() {
     container.innerHTML = html;
 }
 
-/* --- 9. PROFILS --- */
+/* --- 9. INFOS PRATIQUES --- */
+function loadInfos() {
+    db.collection("infos").doc("general").get().then(function(doc) {
+        const textarea = document.getElementById('infos-content');
+        if (doc.exists && textarea) {
+            textarea.value = doc.data().text || "";
+        }
+    });
+}
+
+function toggleEditInfos() {
+    const textarea = document.getElementById('infos-content');
+    const btnEdit = document.getElementById('btn-edit-infos');
+    const btnSave = document.getElementById('btn-save-infos');
+    
+    textarea.readOnly = false;
+    textarea.focus();
+    textarea.style.border = "2px solid #667eea";
+    
+    btnEdit.style.display = 'none';
+    btnSave.style.display = 'inline-block';
+}
+
+function saveInfos() {
+    const textVal = document.getElementById('infos-content').value;
+    
+    db.collection("infos").doc("general").set({ text: textVal }, { merge: true })
+      .then(function() {
+          alert("Infos enregistrées !");
+          const textarea = document.getElementById('infos-content');
+          textarea.readOnly = true;
+          textarea.style.border = "1px solid #eee";
+          document.getElementById('btn-edit-infos').style.display = 'inline-block';
+          document.getElementById('btn-save-infos').style.display = 'none';
+      })
+      .catch(function(e) { alert("Erreur : " + e); });
+}
+
+/* --- 10. PROFILS --- */
 function loadPendingRequests() {
   const container = document.getElementById('pending-requests');
   if(!container) return;
@@ -521,37 +556,3 @@ function formatDate(s) {
   const d = s.split('-'); 
   return d[2] + '/' + d[1]; 
 }
-function toggleEditMemo() {
-    var area = document.getElementById('house-memo');
-    var btnEdit = document.getElementById('btn-edit-memo');
-    var btnSave = document.getElementById('btn-save-memo');
-    
-    // On passe en mode édition
-    area.readOnly = false;
-    area.style.background = "#fff";
-    area.style.border = "1px solid #ccc";
-    area.focus();
-    
-    btnEdit.style.display = 'none';
-    btnSave.style.display = 'inline-block';
-}
-
-function saveMemo() {
-    var text = document.getElementById('house-memo').value;
-    
-    // On sauvegarde dans une collection spéciale "infos"
-    db.collection("infos").doc("general").set({ content: text })
-      .then(function() {
-          alert("Infos mises à jour !");
-          // On remet en mode lecture seule
-          var area = document.getElementById('house-memo');
-          area.readOnly = true;
-          area.style.background = "#f9f9f9";
-          area.style.border = "none";
-          
-          document.getElementById('btn-edit-memo').style.display = 'inline-block';
-          document.getElementById('btn-save-memo').style.display = 'none';
-      })
-      .catch(function(e) { alert("Erreur : " + e); });
-}
-
