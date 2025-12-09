@@ -7,7 +7,7 @@
   
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="icon" type="image/png" href="icon.png">
-  
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -37,14 +37,6 @@
   </div>
 
   <div id="calendar-screen" class="screen-content">
-
-    <div class="memo-card">
-      <h3>&#8505; Infos Maison</h3>
-      <textarea id="house-memo" placeholder="Code Wifi, Digicode, etc..." readonly></textarea>
-      <button id="btn-edit-memo" onclick="toggleEditMemo()" style="display:none;">Modifier</button>
-      <button id="btn-save-memo" onclick="saveMemo()" style="display:none;">Enregistrer</button>
-    </div>
-
     <div class="calendar-navigation">
       <button onclick="changeMonth(-1)">&#9664;</button>
       <h2 id="current-month">Chargement...</h2>
@@ -67,6 +59,22 @@
   <div id="stats-screen" class="screen-content" style="display:none;">
     <div id="stats-container">
       </div>
+  </div>
+
+  <div id="infos-screen" class="screen-content" style="display:none;">
+    <div class="info-container">
+      <h2 style="margin-bottom:10px;">&#128161; Infos Utiles</h2>
+      <p style="color:#666; margin-bottom:15px; font-size:14px;">
+        Wifi, Poubelles, Parking, Digicodes...
+      </p>
+
+      <textarea id="infos-content" class="infos-textarea" readonly></textarea>
+      
+      <div id="infos-buttons" style="display:none; margin-top:15px; text-align:center;">
+        <button id="btn-edit-infos" onclick="toggleEditInfos()" class="btn-action">Modifier</button>
+        <button id="btn-save-infos" onclick="saveInfos()" class="btn-save" style="display:none;">Enregistrer</button>
+      </div>
+    </div>
   </div>
 
   <div id="profile-screen" class="screen-content" style="display:none;">
@@ -114,6 +122,11 @@
       <span class="nav-icon">&#128202;</span>
       <span class="nav-label">Stats</span>
     </button>
+
+    <button class="nav-item" onclick="showScreen('infos')" data-target="infos">
+      <span class="nav-icon">&#128161;</span>
+      <span class="nav-label">Infos</span>
+    </button>
     
     <button class="nav-item" onclick="showScreen('profile')" data-target="profile">
       <span class="nav-icon">&#128100;</span>
@@ -144,7 +157,4 @@
 
   <script src="script.js"></script>
 </body>
-
 </html>
-
-
