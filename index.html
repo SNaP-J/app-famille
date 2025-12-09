@@ -37,6 +37,14 @@
   </div>
 
   <div id="calendar-screen" class="screen-content">
+
+    <div class="memo-card">
+      <h3>&#8505; Infos Maison</h3>
+      <textarea id="house-memo" placeholder="Code Wifi, Digicode, etc..." readonly></textarea>
+      <button id="btn-edit-memo" onclick="toggleEditMemo()" style="display:none;">Modifier</button>
+      <button id="btn-save-memo" onclick="saveMemo()" style="display:none;">Enregistrer</button>
+    </div>
+
     <div class="calendar-navigation">
       <button onclick="changeMonth(-1)">&#9664;</button>
       <h2 id="current-month">Chargement...</h2>
@@ -138,4 +146,5 @@
 </body>
 
 </html>
+
 
